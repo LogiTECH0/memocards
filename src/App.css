@@ -280,6 +280,10 @@ code {
 .card img {
   width: 97px;
 }
+img {
+  user-select: none;
+  -webkit-user-drag: none;
+}
 .timer {
   font-size: 32px;
 }
@@ -371,7 +375,7 @@ button {
     z-index: 10;
     padding: 10px 0;
 
-    background: rgba(0, 0, 0, 0.6); 
+    background: rgba(0, 0, 0, 0.6);
     backdrop-filter: blur(10px);
   }
 
@@ -383,7 +387,7 @@ button {
     max-width: 500px;
     height: auto;
     margin: 0;
-    animation: none; 
+    animation: none;
   }
   .page {
     padding-bottom: 200px;
