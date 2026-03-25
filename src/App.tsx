@@ -194,6 +194,7 @@ function App() {
                               : "hidden"
                           }
                           src={card}
+                          draggable="false"
                         ></img>
                       </div>
                     ))}
