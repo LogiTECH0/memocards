@@ -17,6 +17,8 @@ function App() {
     "all",
   );
   const [sortOrder, setSortOrder] = useState(true);
+  const [showLeaderboard, setShowLeaderboard] = useState(false);
+  const [isMobile, setIsMobile] = useState(window.innerWidth <= 1024);
   const cards = [
     "/blueberries.png",
     "/cherries.png",
@@ -85,7 +87,14 @@ function App() {
     }, 1000);
     return () => clearInterval(interval);
   }, []);
+  useEffect(() => {
+    const handleResize = () => {
+      setIsMobile(window.innerWidth <= 1024);
+    };
 
+    window.addEventListener("resize", handleResize);
+    return () => window.removeEventListener("resize", handleResize);
+  }, []);
   const handleClick = (index: number) => {
     if (opened.length === 2) return;
     if (opened.includes(index) || matched.includes(index)) return;
@@ -116,7 +125,11 @@ function App() {
               difficulty = "hard";
             }
             saveRecord(time, difficulty);
-            alert(`Перемога за ${min}m ${sec}s 😎`);
+            if (isMobile) {
+              setShowLeaderboard(true);
+            } else {
+              alert(`Перемога за ${min}m ${sec}s 😎`);
+            }
           }, 100);
         }
       } else {
@@ -190,40 +203,78 @@ function App() {
             )}
           </div>
         </div>
-        <div className="right">
-          <div className="scroll-bg">
-            <img src="/background.png" alt="" />
-            <img src="/background.png" alt="" />
-          </div>
+        {!isMobile && (
+          <div className="right">
+            <div className="scroll-bg">
+              <img src="/background.png" alt="" />
+              <img src="/background.png" alt="" />
+            </div>
 
-          <div className="best">
-            <h2>Your Best</h2>
-            <div className="diffs">
-              <button onClick={() => setFilter("easy")}>Easy</button>
-              <button onClick={() => setFilter("medium")}>Medium</button>
-              <button onClick={() => setFilter("hard")}>Hard</button>
-            </div>
-            <div className="board">
-              {displayed.map((rec: Record, index: number) => (
-                <div key={index} className="record">
-                  <span>{index + 1}. </span>
-                  <span>{rec.difficulty.toUpperCase()} </span>
-                  <span>
-                    {Math.trunc(rec.time / 60)}m {rec.time % 60}s
-                  </span>
-                </div>
-              ))}
-            </div>
-            <div className="bottom-buttons">
-              <button id="all" onClick={() => setFilter("all")}>
-                View All
-              </button>
-              <button id="sort" onClick={() => setSortOrder(prev => !prev)}>
-                {sortOrder ? "↑" : "↓"}
-              </button>
+            <div className="best">
+              <h2>Your Best</h2>
+              <div className="diffs">
+                <button onClick={() => setFilter("easy")}>Easy</button>
+                <button onClick={() => setFilter("medium")}>Medium</button>
+                <button onClick={() => setFilter("hard")}>Hard</button>
+              </div>
+              <div className="board">
+                {displayed.map((rec: Record, index: number) => (
+                  <div key={index} className="record">
+                    <span>{index + 1}. </span>
+                    <span>{rec.difficulty.toUpperCase()} </span>
+                    <span>
+                      {Math.trunc(rec.time / 60)}m {rec.time % 60}s
+                    </span>
+                  </div>
+                ))}
+              </div>
+              <div className="bottom-buttons">
+                <button id="all" onClick={() => setFilter("all")}>
+                  View All
+                </button>
+                <button id="sort" onClick={() => setSortOrder((prev) => !prev)}>
+                  {sortOrder ? "↑" : "↓"}
+                </button>
+              </div>
             </div>
           </div>
-        </div>
+        )}
+        {isMobile && showLeaderboard && (
+          <div className="overlay" onClick={() => setShowLeaderboard(false)}>
+            <div className="modal" onClick={(e) => e.stopPropagation()}>
+              <div className="best">
+                <h2>Your Best</h2>
+
+                <div className="diffs">
+                  <button onClick={() => setFilter("easy")}>Easy</button>
+                  <button onClick={() => setFilter("medium")}>Medium</button>
+                  <button onClick={() => setFilter("hard")}>Hard</button>
+                </div>
+
+                <div className="board">
+                  {displayed.map((rec, index) => (
+                    <div key={index} className="record">
+                      <span>{index + 1}. </span>
+                      <span>{rec.difficulty.toUpperCase()} </span>
+                      <span>
+                        {Math.trunc(rec.time / 60)}m {rec.time % 60}s
+                      </span>
+                    </div>
+                  ))}
+                </div>
+
+                <div className="bottom-buttons">
+                  <button id="all" onClick={() => setFilter("all")}>
+                    View All
+                  </button>
+                  <button id="sort" onClick={() => setSortOrder((p) => !p)}>
+                    {sortOrder ? "↑" : "↓"}
+                  </button>
+                </div>
+              </div>
+            </div>
+          </div>
+        )}
       </div>
     </>
   );
